@@ -11,3 +11,6 @@ Run test.exe to see the effects.
 ### Contacts
 [mikeduglas@yandex.ru](mailto: mikeduglas@yandex.ru)  
 [mikeduglas66@gmail.com](mailto: mikeduglas66@gmail.com)
+
+### Price
+Free
