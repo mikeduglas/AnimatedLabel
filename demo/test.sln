@@ -1,0 +1,18 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+# Clarion 2.1.0.2447
+Project("{12B76EC0-1D7B-4FA7-A7D0-C524288B48A1}") = "test", "test.cwproj", "{934A73ED-E844-406B-A7A1-9035254B946B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{934A73ED-E844-406B-A7A1-9035254B946B}.Debug|Win32.Build.0 = Debug|Win32
+		{934A73ED-E844-406B-A7A1-9035254B946B}.Debug|Win32.ActiveCfg = Debug|Win32
+		{934A73ED-E844-406B-A7A1-9035254B946B}.Release|Win32.Build.0 = Release|Win32
+		{934A73ED-E844-406B-A7A1-9035254B946B}.Release|Win32.ActiveCfg = Release|Win32
+	EndGlobalSection
+EndGlobal
