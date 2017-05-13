@@ -5,7 +5,6 @@
 
   INCLUDE('svapi.inc'), ONCE
   INCLUDE('ednWinFormsTimer.inc'), ONCE
-  INCLUDE('Winhancer.inc'), ONCE
 
   MAP
     MODULE('AnimLabel.clw')
