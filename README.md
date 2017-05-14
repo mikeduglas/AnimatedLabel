@@ -4,7 +4,7 @@
 Any PROMPT or STRING control can be easily animated in different ways.  
 Run test.exe to see all of them.  
   
-Current release supports 4 animations: Ticker, Wave, Mosaic, Gradient.  
+Current release supports 5 animations: Ticker, Wave, Mosaic, Gradient, Wheel.  
 You can create your own animation in few minutes.  
 Each Animated Label utilizes its own independent timer (not a Clarion TIMER).
 

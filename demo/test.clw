@@ -13,24 +13,26 @@
   MAP
   END
 
-Window                        WINDOW('Animated label demo'),AT(,,344,136),CENTER,GRAY,FONT('Calibri',12)
-                                PROMPT('Product: '),AT(16,16),USE(?PROMPT1),TRN,FONT(,20),RIGHT
-                                PROMPT('Animated Label'),AT(74,16),USE(?lblProduct),TRN,FONT(,20)
-                                PROMPT('Author: '),AT(21,35),USE(?PROMPT2),TRN,FONT(,20),RIGHT
-                                PROMPT('Mike Duglas'),AT(74,35),USE(?lblAuthor),TRN,FONT(,20)
-                                PROMPT('Email: '),AT(29,53),USE(?PROMPT3),TRN,FONT(,20),RIGHT
-                                PROMPT('mikeduglas@yandex.ru'),AT(74,53),USE(?lblEmail),TRN,FONT(,20)
-                                PROMPT('Web: '),AT(34,72),USE(?PROMPT4),TRN,FONT(,20),RIGHT
-                                PROMPT('https://github.com/mikeduglas/AnimatedLabel'),AT(74,72),USE(?lblWWW),TRN, |
+Window                        WINDOW('Animated label demo'),AT(,,344,182),CENTER,GRAY,FONT('Calibri',12)
+                                PROMPT('Product: '),AT(10,14),USE(?PROMPT1),TRN,FONT(,20),RIGHT
+                                PROMPT('Animated Label'),AT(68,14),USE(?lblProduct),TRN,FONT(,20)
+                                PROMPT('Author: '),AT(15,33),USE(?PROMPT2),TRN,FONT(,20),RIGHT
+                                PROMPT('Mike Duglas'),AT(68,33),USE(?lblAuthor),TRN,FONT(,20)
+                                PROMPT('Email: '),AT(23,51),USE(?PROMPT3),TRN,FONT(,20),RIGHT
+                                PROMPT('mikeduglas@yandex.ru'),AT(68,51),USE(?lblEmail),TRN,FONT(,20)
+                                PROMPT('Web: '),AT(28,70),USE(?PROMPT4),TRN,FONT(,20),RIGHT
+                                PROMPT('https://github.com/mikeduglas/AnimatedLabel'),AT(68,70),USE(?lblWWW),TRN, |
                                   FONT(,20)
-                                BUTTON('Animate!'),AT(213,110,54),USE(?bAnimate),DEFAULT
-                                BUTTON('Close'),AT(279,110,47),USE(?bExit),STD(STD:Close)
+                                PROMPT('Powered by*EASYDOTNET*'),AT(10,128),USE(?lblWheel),TRN,FONT(,12,,FONT:bold)
+                                BUTTON('Animate!'),AT(220,158,54),USE(?bAnimate),DEFAULT
+                                BUTTON('Close'),AT(286,158,47),USE(?bExit),STD(STD:Close)
                               END
 
 ticker                        TTicker
 wave                          TWave
 mosaic                        TMosaic
 gradient                      TGradient
+wheel                         TWheel
 
   CODE
   OPEN(Window)
@@ -45,6 +47,8 @@ gradient                      TGradient
   gradient.Init(?lblWWW)
   gradient.Setup(COLOR:Red, COLOR:Blue) !-- Gradient from Red to Blue
 
+  wheel.Init(?lblWheel)
+  
   ACCEPT 
     CASE ACCEPTED()
     OF ?bAnimate
@@ -52,5 +56,6 @@ gradient                      TGradient
       wave.Start(50, 20)                !-- tick every 50ms;  pause 20 ticks
       mosaic.Start(100, 20)             !-- tick every 100ms; pause 20 ticks
       gradient.Start(50, 20)            !-- tick every 50ms;  pause 20 ticks
+      wheel.Start(120, 0)               !-- tick every 50ms;  pause 20 ticks
     END
   END

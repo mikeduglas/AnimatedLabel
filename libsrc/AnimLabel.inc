@@ -1,5 +1,5 @@
   OMIT('***')
-  * Animated Label v1.00
+  * Animated Label v1.01
   * Created by: <Mike Duglas> mikeduglas@yandex.ru
   ***
 
@@ -129,17 +129,17 @@ Setup                           PROCEDURE(LONG pColor, SIGNED pFontDiff)
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
                               END
 
-TTicker                       CLASS(TAnimatedLabel), TYPE, TYPE, MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+TTicker                       CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
 !-- events
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
                               END
 
-TMosaic                       CLASS(TAnimatedLabel), TYPE, TYPE, MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+TMosaic                       CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
 !-- events
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
                               END
 
-TGradient                     CLASS(TAnimatedLabel), TYPE, TYPE, MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+TGradient                     CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
 startColor                      LONG, PRIVATE
 endColor                        LONG, PRIVATE
 
@@ -149,3 +149,11 @@ Setup                           PROCEDURE(LONG pstartColor, SIGNED pEndColor)
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
                               END
 
+TWheel                        CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+Points                          SIGNED, DIM(2, 255), PRIVATE  !(x,y) of each char
+
+Init                            PROCEDURE(SIGNED pFeq), DERIVED
+
+!-- events
+OnTick                          PROCEDURE(), PROTECTED, DERIVED
+                              END

@@ -1,5 +1,5 @@
   OMIT('***')
-  * Animated Label v1.00
+  * Animated Label v1.01
   * Created by: <Mike Duglas> mikeduglas@yandex.ru
   ***
   
@@ -446,10 +446,11 @@ cIndex                          LONG, AUTO
 
   SELF.Feq{PROP:Hide} = TRUE
       
-  LOOP cIndex = 1 TO SELF.nChars
-    SELF.chars[cIndex]{PROP:Hide} = TRUE
-  END
-    
+!  LOOP cIndex = 1 TO SELF.nChars
+!    SELF.chars[cIndex]{PROP:Hide} = TRUE
+!  END
+  HIDE(SELF.chars[1], SELF.chars[SELF.nChars])
+
   SELF.bHidden = TRUE
 
 TAnimatedLabel.Start          PROCEDURE(LONG pInterval, LONG pPauseTicks = 0)
@@ -707,4 +708,75 @@ B                                 BYTE
   
   SETFONT(SELF.chars[SELF.nCurChar],,, nextColor)
   SELF.nCurChar += 1
+!endregion
+
+!region TWheel
+TWheel.Init                   PROCEDURE(SIGNED pFeq)
+winpix                          TWinPix
+PI                              EQUATE(3.1415926535898)     !The value of PI
+alpha                           REAL, AUTO    !angle in radians
+r                               SIGNED, AUTO  !radius
+cIndex                          BYTE, AUTO
+  CODE
+  PARENT.Init(pFeq)
+  
+  CLEAR(SELF.Points)
+  
+  alpha = 2 * PI / SELF.nChars
+  r = SELF.feq{PROP:Width} / 2
+  
+  LOOP cIndex = 1 TO SELF.nChars
+    SELF.Points[1, cIndex] = r * COS(PI - (alpha * (cIndex - 1)))
+    SELF.Points[2, cIndex] = r * SIN(PI - (alpha * (cIndex - 1)))
+  END
+
+TWheel.OnTick                 PROCEDURE()
+winpix                          TWinPix
+cIndex                          BYTE, AUTO
+pIndex                          BYTE, AUTO
+feq                             SIGNED, AUTO
+x0                              SIGNED, AUTO
+y0                              SIGNED, AUTO
+xPos                            SIGNED, AUTO
+yPos                            SIGNED, AUTO
+  CODE
+  IF SELF.nCurChar = SELF.nChars
+    IF SELF.nPauseTicks > 0
+      IF SELF.nPauseElapsed < SELF.nPauseTicks
+        SELF.nPauseElapsed += 1
+        RETURN
+      END
+    END
+  END
+  
+  SELF.nPauseElapsed = 0
+
+  SELF.nCurChar += 1
+  IF SELF.nCurChar > SELF.nChars
+    SELF.nCurChar = 1
+  END
+  
+  !-- hide all
+  HIDE(SELF.chars[1], SELF.chars[SELF.nChars])
+  
+  !-- center point of the wheel
+  x0 = SELF.feq{PROP:Xpos} + SELF.feq{PROP:Width} / 2
+  y0 = SELF.feq{PROP:Ypos}
+  
+  !-- move visible chars to the next char pos left
+  LOOP pIndex = 1 TO SELF.nChars
+    xPos = x0 + SELF.Points[1, pIndex]
+    yPos = y0 - SELF.Points[2, pIndex]
+
+    cIndex = pIndex + (SELF.nCurChar - 1)
+    IF cIndex > SELF.nChars
+      cIndex -= SELF.nChars
+    END
+    feq = SELF.chars[cIndex]
+
+    SETPOSITION(feq, xPos, yPos)
+  END
+
+  !-- unhide all
+  UNHIDE(SELF.chars[1], SELF.chars[SELF.nChars])
 !endregion
