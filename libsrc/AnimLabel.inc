@@ -4,7 +4,10 @@
   ***
 
   INCLUDE('svapi.inc'), ONCE
+
+  !-- EasyDotNet
   INCLUDE('ednWinFormsTimer.inc'), ONCE
+  INCLUDE('ednDateTime.inc'), ONCE
 
   MAP
     MODULE('AnimLabel.clw')
@@ -110,8 +113,8 @@ Reset                           PROCEDURE()
 SetText                         PROCEDURE(STRING pText), PROTECTED, DERIVED
 SetPosition                     PROCEDURE(TWINDOWPOS wp), PROTECTED, DERIVED
 SetFont                         PROCEDURE(TLOGFONT lf), PROTECTED, DERIVED
-Show                            PROCEDURE()
-Hide                            PROCEDURE()
+Show                            PROCEDURE(), VIRTUAL
+Hide                            PROCEDURE(), VIRTUAL
 
 Start                           PROCEDURE(LONG pInterval, LONG pPauseTicks = 0)
 Stop                            PROCEDURE()
@@ -124,7 +127,9 @@ TWave                         CLASS(TAnimatedLabel), TYPE, MODULE('AnimLabel.clw
 nColor                          LONG, PRIVATE
 nFontDiff                       SIGNED, PRIVATE
 
-Setup                           PROCEDURE(LONG pColor, SIGNED pFontDiff)
+Construct                       PROCEDURE()
+Init                            PROCEDURE(SIGNED pFeq, LONG pColor, SIGNED pFontDiff)
+
 !-- events
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
                               END
@@ -143,7 +148,8 @@ TGradient                     CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.cl
 startColor                      LONG, PRIVATE
 endColor                        LONG, PRIVATE
 
-Setup                           PROCEDURE(LONG pstartColor, SIGNED pEndColor)
+Construct                       PROCEDURE()
+Init                            PROCEDURE(SIGNED pFeq, LONG pStartColor, SIGNED pEndColor)
 
 !-- events
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
@@ -156,4 +162,36 @@ Init                            PROCEDURE(SIGNED pFeq), DERIVED
 
 !-- events
 OnTick                          PROCEDURE(), PROTECTED, DERIVED
+                              END
+
+!static (not animated) label with 3D look
+TLabel3D                      CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+m_shadow                        &TAnimatedLabel, PROTECTED
+m_shadowColor                   LONG, PRIVATE
+m_shadowDX                      LONG, PRIVATE
+m_shadowDY                      LONG, PRIVATE
+
+Construct                       PROCEDURE()
+Destruct                        PROCEDURE()
+Init                            PROCEDURE(SIGNED pFeq), DERIVED
+Init                            PROCEDURE(SIGNED pFeq, LONG pShadowColor, LONG pDX, LONG pDY)
+Show                            PROCEDURE(), DERIVED
+Hide                            PROCEDURE(), DERIVED
+                              END
+
+TDigitalClock                 CLASS(TAnimatedLabel), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+m_DateTime                      &TSystemDateTime, PRIVATE
+m_timeFmt                       STRING(32), PRIVATE
+
+Construct                       PROCEDURE()
+Destruct                        PROCEDURE()
+Init                            PROCEDURE(SIGNED pFeq), DERIVED
+Init                            PROCEDURE(SIGNED pFeq, STRING pTimeFmt)
+
+!-- events
+OnTick                          PROCEDURE(), PROTECTED, DERIVED
+                              END
+
+TGradientProgress             CLASS(TGradient), TYPE,  MODULE('AnimLabel.clw'), LINK('AnimLabel.clw')
+Init                            PROCEDURE(SIGNED pFeq, LONG pStartColor, SIGNED pEndColor)
                               END

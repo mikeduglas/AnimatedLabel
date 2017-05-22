@@ -34,6 +34,7 @@ Destruct                        PROCEDURE()
 Init                            PROCEDURE(SIGNED pFeq, STRING pText)
 FullWidth                       PROCEDURE(), UNSIGNED
 SpaceWidth                      PROCEDURE(), UNSIGNED
+Height                          PROCEDURE(), UNSIGNED
                               END
 !endregion
 
@@ -143,9 +144,14 @@ cIndex                          LONG, AUTO
     RETURN 0
   END
   
-  
   nospaceCtrl.Init(SELF.feq, nospaceString)
   RETURN (SELF.feq{PROP:Width} - nospaceCtrl.FullWidth()) / spaceNum
+  
+TDummyPrompt.Height           PROCEDURE()
+winpix                          TWinPix
+  CODE
+  ASSERT(SELF.feq <> 0)
+  RETURN SELF.feq{PROP:Height}
 !endregion
   
 !region TAnimationTimer
@@ -440,15 +446,11 @@ cIndex                          LONG, AUTO
     !-- not initialized
     RETURN
   END
-  al::DebugInfo('Hide')
+!  al::DebugInfo('Hide')
   
   SELF.bHidden = TRUE
 
   SELF.Feq{PROP:Hide} = TRUE
-      
-!  LOOP cIndex = 1 TO SELF.nChars
-!    SELF.chars[cIndex]{PROP:Hide} = TRUE
-!  END
   HIDE(SELF.chars[1], SELF.chars[SELF.nChars])
 
   SELF.bHidden = TRUE
@@ -476,11 +478,18 @@ TAnimatedLabel.OnTick         PROCEDURE()
 !endregion
   
 !region TWave
-TWave.Setup                   PROCEDURE(LONG pColor, SIGNED pFontDiff)
+TWave.Construct               PROCEDURE()
+  CODE
+  SELF.nColor = COLOR:Red
+  SELF.nFontDiff = 4
+
+TWave.Init                    PROCEDURE(SIGNED pFeq, LONG pColor, SIGNED pFontDiff)
 winpix                          TWinPix
 feq                             SIGNED, AUTO
 dy                              SIGNED, AUTO
   CODE
+  PARENT.Init(pFeq)
+  
   SELF.nColor = pColor
   SELF.nFontDiff = pFontDiff
   RETURN 
@@ -649,9 +658,15 @@ feq                             SIGNED, AUTO
 !endregion
   
 !region TGradient
-TGradient.Setup               PROCEDURE(LONG pstartColor, SIGNED pEndColor)
+TGradient.Construct           PROCEDURE()
   CODE
-  SELF.startColor = pstartColor
+  SELF.startColor = COLOR:Red
+  SELF.endColor = COLOR:Blue
+
+TGradient.Init                PROCEDURE(SIGNED pFeq, LONG pStartColor, SIGNED pEndColor)
+  CODE
+  PARENT.Init(pFeq)
+  SELF.startColor = pStartColor
   SELF.endColor = pEndColor
 
 TGradient.OnTick              PROCEDURE()
@@ -686,11 +701,10 @@ B                                 BYTE
       IF SELF.nPauseElapsed < SELF.nPauseTicks
         SELF.nPauseElapsed += 1
         RETURN
-      ELSE
-        SELF.nCurChar = 0
-        RETURN
       END
     END
+    SELF.nCurChar = 0
+    RETURN
   END
   
   SELF.nPauseElapsed = 0
@@ -780,3 +794,127 @@ yPos                            SIGNED, AUTO
   !-- unhide all
   UNHIDE(SELF.chars[1], SELF.chars[SELF.nChars])
 !endregion
+
+!region Tlabel3D
+TLabel3D.Construct            PROCEDURE()
+  CODE
+  SELF.m_shadowColor = COLOR:GRAYTEXT
+  SELF.m_shadowDX = 2
+  SELF.m_shadowDY = 2
+  
+TLabel3D.Destruct             PROCEDURE()
+  CODE
+  IF NOT SELF.m_shadow &= NULL
+    DISPOSE(SELF.m_shadow)
+  END
+  
+TLabel3D.Init                 PROCEDURE(SIGNED pFeq)
+shadowFeq                       SIGNED, AUTO
+  CODE
+  PARENT.Init(pFeq)
+  
+  shadowFeq = CREATE(0, pFeq{PROP:Type}, pFeq{PROP:Parent})
+  shadowFeq{PROP:Text} = pFeq{PROP:Text}
+  shadowFeq{PROP:Trn} = TRUE
+  
+  SETFONT(shadowFeq, pFeq{PROP:Font, 1}, pFeq{PROP:Font, 2}, SELF.m_shadowColor, pFeq{PROP:Font, 4}, pFeq{PROP:Font, 5})
+  SETPOSITION(shadowFeq, pFeq{PROP:At, 1} + SELF.m_shadowDX, pFeq{PROP:At, 2} + SELF.m_shadowDY, pFeq{PROP:At, 3}, pFeq{PROP:At, 4})
+  
+  SELF.m_shadow &= NEW TAnimatedLabel
+  SELF.m_shadow.Init(shadowFeq)
+
+TLabel3D.Init                 PROCEDURE(SIGNED pFeq, LONG pShadowColor, LONG pDX, LONG pDY)
+  CODE
+  SELF.m_shadowColor = pShadowColor
+  SELF.m_shadowDX = pDX
+  SELF.m_shadowDY = pDY
+  SELF.Init(pFeq)
+  
+TLabel3D.Show                 PROCEDURE()
+  CODE
+  PARENT.Show()
+  IF NOT SELF.m_shadow &= NULL
+    SELF.m_shadow.Show()
+  END
+  
+TLabel3D.Hide                 PROCEDURE()
+  CODE
+  PARENT.Hide()
+  IF NOT SELF.m_shadow &= NULL
+    SELF.m_shadow.Hide()
+  END
+!endregion
+  
+!region TDigitalClock
+TDigitalClock.Construct       PROCEDURE()
+  CODE
+  SELF.m_DateTime &= NEW TSystemDateTime
+  SELF.m_timeFmt = 'HH:mm'
+  
+TDigitalClock.Destruct        PROCEDURE()
+  CODE
+  IF NOT SELF.m_DateTime &= NULL
+    DISPOSE(SELF.m_DateTime)
+  END
+  
+TDigitalClock.Init            PROCEDURE(SIGNED pFeq)
+  CODE
+  pFeq{PROP:NoWidth} = TRUE
+  PARENT.Init(pFeq)
+  SELF.m_DateTime.Now()
+  SELF.feq{PROP:Text} = SELF.m_DateTime.ToString(SELF.m_timeFmt)
+
+TDigitalClock.Init            PROCEDURE(SIGNED pFeq, STRING pTimeFmt)
+  CODE
+  IF pTimeFmt
+    SELF.m_timeFmt = pTimeFmt
+  END
+  
+  SELF.Init(pFeq)
+
+TDigitalClock.OnTick          PROCEDURE()
+cIndex                          BYTE, AUTO
+isOddTick                       BOOL, AUTO
+  CODE
+  SELF.nPauseElapsed += 1
+  
+  isOddTick = CHOOSE(SELF.nPauseElapsed % 2, TRUE, FALSE)
+  
+  IF isOddTick
+    !-- re-read current time
+    SELF.m_DateTime.Now()
+    SELF.feq{PROP:Text} = SELF.m_DateTime.ToString(SELF.m_timeFmt)
+
+    !-- change ' ' to ':'
+    LOOP cIndex = 1 TO SELF.nChars
+      IF SUB(SELF.feq{PROP:Text}, cIndex, 1) = ':'
+        SELF.chars[cIndex]{PROP:Text} = ':'
+      END
+    END
+  ELSE
+    !-- change ':' to ' '
+    LOOP cIndex = 1 TO SELF.nChars
+      IF SUB(SELF.feq{PROP:Text}, cIndex, 1) = ':'
+        SELF.chars[cIndex]{PROP:Text} = ' '
+      END
+    END
+  END
+!endregion
+  
+!region TGradientProgress
+TGradientProgress.Init        PROCEDURE(SIGNED pFeq, LONG pStartColor, SIGNED pEndColor)
+winpix                          TWinPix
+dummyCtrl                       TDummyPrompt
+origWidth                       SIGNED, AUTO
+nChars                          BYTE, AUTO
+  CODE
+  origWidth = pFeq{PROP:Width}
+  pFeq{PROP:FontColor} = COLOR:BTNFACE
+  pFeq{PROP:FontName} = 'Terminal'
+  pFeq{PROP:Text} = '<0DBh>'
+  dummyCtrl.Init(pFeq, '<0DBh>')
+  nChars = origWidth / dummyCtrl.FullWidth()
+  pFeq{PROP:Text} = ALL('<0DBh>', nChars)
+  PARENT.Init(pFeq, pStartColor, pEndColor)
+!endregion
+  
