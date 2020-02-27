@@ -17,4 +17,4 @@ Each Animated Label utilizes its own independent timer (not a Clarion TIMER).
 - <mikeduglas66@gmail.com>
 
 ### Price
-Free
+100 USD
