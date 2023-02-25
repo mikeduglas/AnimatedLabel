@@ -7,13 +7,4 @@
     type="win32"
   />
   <description>ConsoleTest</description>
-  <dependency>
-    <dependentAssembly>
-      <assemblyIdentity 
-        type="win32" 
-        name="EasyDotNet" 
-        version="1.0.4.0"
-      />
-    </dependentAssembly>
-  </dependency>
 </assembly>

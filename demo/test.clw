@@ -29,14 +29,15 @@ Window                        WINDOW('Animated label demo'),AT(,,344,182),CENTER
                                     BUTTON('Animate!'),AT(279,124,54),USE(?bAnimateAbout)
                                   END
                                   TAB('Samples'),USE(?TAB2)
-                                    PROMPT('Powered by*EASYDOTNET*'),AT(220,58),USE(?lblWheel),TRN, |
-                                      FONT(,12,,FONT:bold)
+                                    PROMPT('Animated=lebal='),AT(220,58),USE(?lblWheel),TRN, |
+                                      FONT(,12)
                                     PROMPT('Static 3D text'),AT(10,24),USE(?lblStatic),TRN,FONT(,42)
                                     STRING('Short time'),AT(10,62),USE(?lblClock1),TRN,FONT(,24,0CC6600H, |
                                       FONT:regular)
                                     STRING('Long time'),AT(10,83,,18),USE(?lblClock2),TRN,FONT(,24,0CC6600H, |
                                       FONT:regular)
-                                    PROMPT('Progress Bar'),AT(10,124,266),USE(?lblProgress),TRN,FONT(,24)
+                                    PROMPT('*'),AT(251,122),USE(?lblWait),TRN,FONT(,36)
+                                    PROMPT('Progress Bar'),AT(10,124,228),USE(?lblProgress),TRN,FONT(,24)
                                     BUTTON('Animate!'),AT(279,124,54),USE(?bAnimateOthers),DEFAULT
                                   END
                                 END
@@ -52,6 +53,7 @@ label3D                       TLabel3D
 clock1                        TDigitalClock
 clock2                        TDigitalClock
 progress                      TGradientProgress
+wait                          TWaitIndicator
 
 fontMgr                       TCustomFontMgr
 
@@ -65,18 +67,18 @@ fontMgr                       TCustomFontMgr
   ?lblClock1{PROP:FontName} = 'Digital-7 Mono'
   ?lblClock2{PROP:FontName} = 'Digital-7 Mono'
 
+  !- initialize all animation labels
   ticker.Init(?lblProduct)
   wave.Init(?lblAuthor)   !-- default Red char, font + 4
   mosaic.Init(?lblEmail)
-  gradient.Init(?lblWWW) !-- default gradient from Red to Blue
+  gradient.Init(?lblWWW)  !-- default gradient from Red to Blue
   wheel.Init(?lblWheel)
   label3D.Init(?lblStatic)
-  !-- time formats: see https://msdn.microsoft.com/en-us/library/az4se3k1(v=vs.110).aspx
-  clock1.Init(?lblClock1, 'HH:mm')
-  clock2.Init(?lblClock2, 'HH:mm:ss')
-
+  clock1.Init(?lblClock1, '@t7')
+  clock2.Init(?lblClock2, '@t8')
   progress.Init(?lblProgress, 0098FB98h, COLOR:Green)
-
+  wait.Init(?lblWait)
+  
   ACCEPT 
     CASE ACCEPTED()
     OF ?bAnimateAbout
@@ -85,13 +87,12 @@ fontMgr                       TCustomFontMgr
       mosaic.Start(100, 20)             !-- tick every 100ms; pause 20 ticks
       gradient.Start(50, 20)            !-- tick every 50ms;  pause 20 ticks
     OF ?bAnimateOthers
-      wheel.Start(120, 0)
+      wheel.Start(100, 10)
       label3D.Show()
-      
       clock1.Start(500)
       clock2.Start(500)
-
       progress.Start(25, 2)
+      wait.Start(100)
     END
   END
-
+  
